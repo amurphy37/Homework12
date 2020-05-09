@@ -72,8 +72,13 @@ async function viewEmployees() {
   loadMainPrompts();
 }
 //Create viewEmployeesByDepartment function
+async function viewEmployeesByDepartment() {}
 
-//Create videEmployeesByManager function
+//Create viewEmployeesByManager function
+
+async function viewEmployeesByManager(){
+  
+}
 
 //save
 async function removeEmployee() {
