@@ -348,76 +348,149 @@ async function addRole() {
 
   loadMainPrompts();
 }
-// //Create removeRole function
-// async function removeRole();
+//Create removeRole function
+async function removeRole() {
+  const roles = await db.findAllRoles();
 
-// // View Departments
+  const roleChoices = roles.map(({ id, role}) => ({
+    name: `${role}`,
+    value: id
+  }));
 
+  const { roleId } = await prompt([
+    {
+      type: "list",
+      name: "roleId",
+      message: "Which role do you want to remove?",
+      choices: roleChoices
+    }
+  ]);
 
+  await db.removeRole(roleId);
 
-// //Create addDepartment function
-// async function addDepartment();
+  console.log("Removed role from the database!");
 
-// //Create removeDepartment function
-// async function removeDepartment();
+  loadMainPrompts();
+}
+//Create addDepartment function
+async function addDepartment() {
+  const newDept = await prompt([
+    {
+      name: "name",
+      message: "What is the name of the new department?"
+    }
+  ]);
+   
+  await db.createDepartment(newDept);
+
+  console.log("Successfully added department!")
+
+  loadMainPrompts();
+
+}
+
+//Create removeDepartment function
+async function removeDepartment() {
+  const departments = await db.findAllDepartments();
+
+  const deptChoices = departments.map(({ id, name}) => ({
+    name: `${name}`,
+    value: id
+  }));
+
+  const { deptId } = await prompt([
+    {
+      type: "list",
+      name: "deptId",
+      message: "Which department do you want to remove?",
+      choices: deptChoices
+    }
+  ]);
+
+  await db.removeDepartment(deptId);
+
+  console.log("Removed department from the database!");
+
+  loadMainPrompts();
+
+}
 
 // //save
-// async function addEmployee() {
-//   const roles = await db.findAllRoles();
-//   const employees = await db.findAllEmployees();
+async function addEmployee() {
+  const roles = await db.findAllRoles();
+  const employees = await db.findAllEmployees();
+  const managers = await db.findAllManagers();
 
-//   const employee = await prompt([
-//     {
-//       name: "first_name",
-//       message: "What is the employee's first name?"
-//     },
-//     {
-//       name: "last_name",
-//       message: "What is the employee's last name?"
-//     }
-//   ]);
+  const employee = await prompt([
+    {
+      name: "first_name",
+      message: "What is the employee's first name?"
+    },
+    {
+      name: "last_name",
+      message: "What is the employee's last name?"
+    }
+  ]);
 
-//   const roleChoices = roles.map(({ id, title }) => ({
-//     name: title,
-//     value: id
-//   }));
+  const roleChoices = roles.map(({ id, role }) => ({
+    name: `${role}`,
+    value: id
+  }));
 
-//   const { roleId } = await prompt({
-//     type: "list",
-//     name: "roleId",
-//     message: "What is the employee's role?",
-//     choices: roleChoices
-//   });
+  const { roleId } = await prompt({
+    type: "list",
+    name: "roleId",
+    message: "What is the employee's role?",
+    choices: roleChoices
+  });
 
-//   employee.role_id = roleId;
+  employee.role_id = roleId;
 
-//   const managerChoices = employees.map(({ id, first_name, last_name }) => ({
-//     name: `${first_name} ${last_name}`,
-//     value: id
-//   }));
-//   managerChoices.unshift({ name: "None", value: null });
+  const managerChoices = managers.map(({ id, first_name, last_name }) => ({
+    name: `${first_name} ${last_name}`,
+    value: id
+  }));
 
-//   const { managerId } = await prompt({
-//     type: "list",
-//     name: "managerId",
-//     message: "Who is the employee's manager?",
-//     choices: managerChoices
-//   });
+  const { managerId } = await prompt({
+    type: "list",
+    name: "managerId",
+    message: "Who is the employee's manager?",
+    choices: managerChoices
+  });
 
-//   employee.manager_id = managerId;
+  employee.manager_id = managerId;
 
-//   await db.createEmployee(employee);
+  await db.createEmployee(employee);
 
-//   console.log(
-//     `Added ${employee.first_name} ${employee.last_name} to the database`
-//   );
+  console.log(
+    `Added ${employee.first_name} ${employee.last_name} to the database`
+  );
 
-//   loadMainPrompts();
-// }
+  loadMainPrompts();
+}
 
 // // Create viewTotalBudget
 
-// async function viewTotalBudget();
+async function viewTotalBudget() {
+  const departments = await db.findAllDepartments();
+
+  const deptChoices = departments.map(({id, name})=> ({
+    name: `${name}`,
+    value: id
+  }));
+
+  const { deptId } = await prompt ({
+    type: "list",
+    name: "deptId",
+    message: "Which department's utilized budget would you like to view?",
+    choices: deptChoices
+  });
+
+  const dept =  await db.findDepartmentBudget(deptId);
+  console.table(dept);
+
+  loadMainPrompts();
+}
 
 function quit() {
   console.log("Goodbye!");

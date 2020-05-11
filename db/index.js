@@ -77,7 +77,16 @@ class DB {
   // Find all departments, join with employees and roles and sum up utilized department budget
   findAllDepartments(){
     return this.connection.query(
-      "SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id GROUP BY department.id, department.name;"
+      "SELECT department.id as id, department.name as name, SUM(role.salary) AS utilized_budget FROM department LEFT JOIN role ON role.department_id = department.id GROUP BY department.name, department.id;"
+    );
+  }
+
+  // Find a specific department's utilized budget
+
+  findDepartmentBudget(departmentID) {
+    return this.connection.query(
+      "SELECT department.id as id, department.name as name, SUM(role.salary) AS utilized_budget FROM department LEFT JOIN role ON role.department_id = department.id GROUP BY department.name, department.id HAVING id = ?",
+      departmentID
     );
   }
   
@@ -88,10 +97,7 @@ class DB {
 
   // Remove a department
   removeDepartment(departmentID){
-    return this.connection.query(
-      "DELETE FROM department WHERE id = ?",
-      departmentID
-    );
+    return this.connection.query("DELETE FROM department WHERE id = ?", departmentID);
   }
 
   // Find all employees in a given department, join with roles to display role titles
