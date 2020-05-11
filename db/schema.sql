@@ -27,3 +27,9 @@ CREATE TABLE employee (
   CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE
 
 );
+
+CREATE TABLE employee manager (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  first_name VACHAR(30),
+  last_name VARCHAR(30),
+)

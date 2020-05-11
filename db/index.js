@@ -9,7 +9,7 @@ class DB {
   // Find all employees, join with roles and departments to display their roles, salaries, departments, and managers
   findAllEmployees() {
     return this.connection.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;"
+      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, manager.id as manager_id, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN manager on manager.id = employee.manager_id;"
     );
   }
 
@@ -38,9 +38,13 @@ class DB {
   // Find all employees except the given employee id
   findEmployeesExceptId(employeeId){
     return this.connection.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id WHERE employee.id <> ?",
+      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, manager.id as manager_id, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN manager on manager.id = employee.manager_id WHERE employee.id <> ?",
       employeeId      
       );
+  }
+
+  findAllManagers() {
+    return this.connection.query("SELECT * FROM manager");
   }
   // Update the given employee's manager
   updateEmployeeManager(employeeId, managerId){
@@ -53,7 +57,7 @@ class DB {
   // Find all roles, join with departments to display the department name
   findAllRoles(){
     return this.connection.query(
-      "SELECT role.title as role, role.salary, department.name as department FROM role INNER JOIN department ON role.department_id = department.id"
+      "SELECT role.id as id, role.title as role, role.salary, department.name as department FROM role INNER JOIN department ON role.department_id = department.id"
     );
   }
 
@@ -93,7 +97,7 @@ class DB {
   // Find all employees in a given department, join with roles to display role titles
   findAllEmployeesByDep(departmentID){
     return this.connection.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id WHERE department.id = ?",
+      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, manager.id as manager_id, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN manager on manager.id = employee.manager_id WHERE department.id = ?",
       departmentID
       );
   }
@@ -101,7 +105,7 @@ class DB {
   // Find all employees by manager, join with departments and roles to display titles and department names
   findAllEmployeesByManager(managerID){
     return this.connection.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id WHERE employee.manager_id = ?",
+      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN manager on manager.id = employee.manager_id WHERE employee.manager_id = ?",
       managerID
       );
   }
